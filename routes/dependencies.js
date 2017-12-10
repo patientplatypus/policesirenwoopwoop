@@ -5,7 +5,7 @@ var router = express.Router();
 
 /* GET dependencies listing. */
 
-module.exports = ({ client }) => {
+module.exports = ( client ) => {
 
   router.get('/', function(req, res, next) {
     res.send('respond with a resource');
