@@ -9,6 +9,16 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var dependencies = require('./routes/dependencies');
 var smoketest = require('./routes/smoketest');
+var geometries = require('./routes/geometries');
+
+// var initialize = require('./routes/initialize');
+
+
+//postgres database connected as well in case mongo doesn't work :D
+var pg=require('pg');
+var conString=process.env.PG_HOST;
+var client = new pg.Client(conString);
+client.connect();
 
 var app = express();
 var cors = require('cors')
@@ -30,10 +40,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/', index);
-app.use('/dependencies', dependencies);
-app.use('/smoketest', smoketest);
+var client = new pg.Client(conString);
+client.connect();
 
+
+app.use('/', index(client));
+app.use('/dependencies', dependencies(client));
+app.use('/smoketest', smoketest(client));
+app.use('/geometries', geometries(client));
+
+// app.use('/initialize', initialize(client));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
